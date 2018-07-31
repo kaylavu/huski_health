@@ -5,8 +5,12 @@ module.exports = function knexData(knex) {
         return knex('accounts').where({email: email, password: password})
       },
 
-      getPet: function (email, password) {
-        // return (knex('pets').where({id: }))
+      getPet: function (petId) {
+        return knex('pets').where({id: petId})
+      },
+
+      getUserPets: function (userId) {
+        return knex('pets').where({account_id: userId})
       },
   
       insertAccount: function (name, email, password) {
@@ -25,14 +29,15 @@ module.exports = function knexData(knex) {
         }).then()
       },
 
-      editPet: function (data) {
-        knex('pets').where({
-          'id': 1
+      editPet: function (newPetInfo) {
+       return knex('pets').where({
+          'id': newPetInfo.petId,
         }).update({
-          'name': data.newPetName, 
-          'weight': data.newPetWeight
-        }).then(console.log("CHANGED"))
+          'name': newPetInfo.newPetName, 
+          'weight': newPetInfo.newPetWeight
+        })
       },
+      
 
       newPet: function (data) {
         knex('pets').insert({

@@ -4,13 +4,12 @@ import $ from 'jquery';
 class PetProfile extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props.pet); 
     this.state = {
       pet: this.props.pet,
-      petName: this.props.pet[0].name, 
-      petWeight: this.props.pet[0].weight,
-      petBreed: this.props.pet[0].breed, 
+      petName: this.props.pet.name, 
+      petWeight: this.props.pet.weight, 
       isEditing: false, 
-      test: 'hello,world',
      };
     this.toggleEdit = this.toggleEdit.bind(this);
     this.editPetProfile = this.editPetProfile.bind(this);
@@ -21,9 +20,9 @@ class PetProfile extends Component {
    
   }
 
-
   toggleEdit() {
-    this.setState({isEditing: !this.state.isEditing})
+    this.setState({isEditing: !this.state.isEditing}); 
+    
   }
 
   editPetProfile(event) {
@@ -31,8 +30,10 @@ class PetProfile extends Component {
   }
 
   savePetProfile(event){
+    console.log("USE THIS PET ID TO MAKE EDIT REQUESTS:", this.state.pet.id)
+    const id  = this.state.pet.id
     event.preventDefault(); 
-    $.ajax('http://localhost:8080/api/pets/1', {
+    $.ajax(`http://localhost:8080/api/pets/${id}`, {
       method: 'POST',
       data: {
         newPetName: this.state.petName, 
@@ -70,7 +71,7 @@ class PetProfile extends Component {
           <img className="pet-img" style={{ width: "100%" }} src="https://toll-imageinaboxllc.netdna-ssl.com/wp-content/uploads/2014/06/Fat-Cat_400-2.jpg" />
       {/*Consider creating a EditPetProfile.jsx component. Will need to make ajax post request to the server to save new pet information*/}
           <form>
-            Name: <input type="text" name="name" placeholder={this.state.pet[0].name} defaultValue={this.state.petName} onChange={this.onChangePetName}/><br/>
+            Name: <input type="text" name="name" defaultValue={this.state.petName} onChange={this.onChangePetName}/><br/>
             Weight:<input type="text" name="weight" defaultValue={this.state.petWeight} onChange={this.onChangePetWeight}/><br/>
             Age:<input type="text" name="age"/><br/>
             Birthday:<input type="text" name="birthday"/><br/>
@@ -101,11 +102,11 @@ class PetProfile extends Component {
                 </tr>
                 <tr>
                   <td>Age:</td>
-                  <td>{this.props.pet[0].age}</td>
+                  {/* <td>{this.props.pet[0].age}</td> */}
                 </tr>
                 <tr>
                   <td>Birthday:</td>
-                  <td>{this.props.pet[0].birthday}</td>
+                  {/* <td>{this.props.pet[0].birthday}</td> */}
                 </tr>
                 <tr>
                   <td>Breed:</td>
@@ -113,11 +114,11 @@ class PetProfile extends Component {
                 </tr>
                 <tr>
                   <td>Owners:</td>
-                  <td>{this.props.pet[0].owner}</td>
+                  {/* <td>{this.props.pet[0].owner}</td> */}
                 </tr>
                 <tr>
                   <td>Notes:</td>
-                  <td>{this.props.pet[0].notes}</td>
+                  {/* <td>{this.props.pet[0].notes}</td> */}
                 </tr>
                 <tr>
                   <td>

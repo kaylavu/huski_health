@@ -21,18 +21,44 @@ app.use(bodyParser.urlencoded({
     extended:true
 })); 
 
-app.post('/api/pets/1', (req, res) => {
-    let data = req.body
-   database.editPet(data)
-    return res.json(data)
-    //get the DAta from the POST
-    //2. To save the data in the Database through Knex
-    //3. use .then to send the response back 
+//Request to server to return a list of a user's pets
+app.get('/api/pets', (req,res) => {
+    database.getUserPets(req.query.userId).then(function(result) {
+    console.log("GET USER'S PETS:", result)
+        res.send(result)
+    })
 })
 
+//Display Dashboard for a single pet
+app.get('/api/pets/:id', (req,res) => {
+    database.getPet(req.params.id).then(function(result) {
+        // TODO: what if there are no pets with this id?  Do something reasonable.
+        console.log("SINGLE PET:", result[0])
+        return res.json(result[0])
+    })
+})
+
+//EDIT single pet information 
+app.post('/api/pets/:id', (req, res) => {
+    console.log(req.body)
+    console.log("PET ID", req.params.id);
+    const {newPetName, newPetWeight} = req.body
+    const newPetInfo = {
+        petId: req.params.id,
+        newPetName, 
+        newPetWeight, 
+    }
+    database.editPet(newPetInfo).then(function(result) {
+        // console.log("PET EDITED: NEW PET INFO", result)
+        return res.sendStatus(204)
+    })
+})
+
+//User can add a new pet
 app.post('/api/pets', (req, res) => {
     database.newPet(req.body.newData)
 })
+
 
 app.get('/api/login', (req, res) => {
    console.log("HIT")
@@ -51,6 +77,7 @@ app.post('/api/pets', (req, res) => {
 app.listen(PORT, () => {
  console.log("Example app listening on port " + PORT);
 });
+
 
 
 

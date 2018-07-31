@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { BrowserRouter, Route } from "react-router-dom";
 
 export default function NavBar(props) {
   return (
