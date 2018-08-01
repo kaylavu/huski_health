@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({
 //Request to server to return a list of a user's pets
 app.get('/api/pets', (req,res) => {
     database.getUserPets(req.query.userId).then(function(result) {
-    console.log("GET USER'S PETS:", result)
+    // console.log("GET USER'S PETS:", result)
         res.send(result)
     })
 })
@@ -33,19 +33,19 @@ app.get('/api/pets', (req,res) => {
 app.get('/api/pets/:id', (req,res) => {
     database.getPet(req.params.id).then(function(result) {
         // TODO: what if there are no pets with this id?  Do something reasonable.
-        console.log("SINGLE PET:", result[0])
+        // console.log("SINGLE PET:", result[0])
         return res.json(result[0])
     })
 })
 
-
-// app.get('/api/pets/:id/activities', (req,res) => {
-//     database.getPet(req.params.id).then(function(result) {
-//         // TODO: what if there are no pets with this id?  Do something reasonable.
-//         console.log("SINGLE PET:", result[0])
-//         return res.json(result[0])
-//     })
-// })
+//Get all activities for a pet 
+app.get('/api/pets/:id/activities', (req,res) => {
+    console.log("USE THIS PET ID TO SEARCH FOR ACTIVITIES",req.params.id)
+    database.getPetActivities(req.params.id).then(function(result) {
+        console.log("ACTIVITIES FOUND:",result)
+        return res.json(result)
+    })
+})
 
 //EDIT single pet information 
 app.post('/api/pets/:id', (req, res) => {

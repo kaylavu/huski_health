@@ -36,6 +36,17 @@ class PetContainer extends Component {
         console.log("ERROR: Couldn't make ajax request for this single pet.");
       }
     });
+
+    $.ajax(`http://localhost:8080/api/pets/${id}/activities`, {
+      method: "GET",
+      success: result => {
+        console.log(result);
+        this.setState({ activities: result });
+      },
+      error: function(err) {
+        console.log("ERROR: Couldn't make ajax request for this single pet.");
+      }
+    })
   }
 
   // componentDidMount() {
@@ -55,20 +66,14 @@ class PetContainer extends Component {
   // }
 
   render() {
-    const pet = this.state.pet;
-    return pet ? <Pet pet={pet} /> : <p>Loading</p>;
+    const {pet, activities} = this.state;
+    return pet && activities ? <Pet pet={pet} activities={activities}/> : <p>Loading</p>;
     // return pet ? <Pet pet={pet} /> : <p>Loading</p>;
   }
 }
 
 const Pet = (props) => {
-  // console.log(props.pet)
   return (
-    // <div>
-    //   <p> {props.pet.species} </p>
-    //   <p> Hello, please implement a dashboard for me, WOOFWOOF!</p>
-    // </div>
-
       <div>
     <NavBar />
     <div className="container-fluid">
@@ -79,7 +84,7 @@ const Pet = (props) => {
         <div className="col-sm-9">
           <div className="col-sm-8">
             <PetChart pet={props.pet} />
-            <Timeline pet={props.pet} />
+            <Timeline pet={props.pet} activities={props.activities} />
           </div>
           <StatusBar pet={props.pet} />
         </div>

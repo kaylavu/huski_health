@@ -12,6 +12,10 @@ module.exports = function knexData(knex) {
       getUserPets: function (userId) {
         return knex('pets').where({account_id: userId})
       },
+
+      getPetActivities: function (petId) {
+        return knex('history').where({type: 'activity', pet_id: petId})
+      },
   
       insertAccount: function (name, email, password) {
         knex('accounts').insert([{
