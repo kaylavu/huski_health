@@ -92,9 +92,6 @@ const Pet = (props) => {
 export default PetContainer;
 
 
-
-
-
 // render() {
 //     return (
 //         <div>
