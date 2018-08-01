@@ -38,6 +38,15 @@ app.get('/api/pets/:id', (req,res) => {
     })
 })
 
+
+// app.get('/api/pets/:id/activities', (req,res) => {
+//     database.getPet(req.params.id).then(function(result) {
+//         // TODO: what if there are no pets with this id?  Do something reasonable.
+//         console.log("SINGLE PET:", result[0])
+//         return res.json(result[0])
+//     })
+// })
+
 //EDIT single pet information 
 app.post('/api/pets/:id', (req, res) => {
     console.log(req.body)

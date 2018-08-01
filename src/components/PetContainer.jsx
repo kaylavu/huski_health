@@ -12,7 +12,8 @@ class PetContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pet: null
+      pet: null, 
+      activities: null, 
     };
   }
 
@@ -36,6 +37,22 @@ class PetContainer extends Component {
       }
     });
   }
+
+  // componentDidMount() {
+  //   const {id} = this.props.match.params; 
+  //   $.when(
+  //     $.get(`http://localhost:8080/api/pets/${id}`),
+  //     $.get(`http://localhost:8000/api/pets/${id}/activities`),
+  //     )
+  //     .done(function(pet, activities){
+  //         this.setState({pet: pet, activities: activities })
+  //         console.log(this.state)
+  //     })
+  //     .fail(function(){
+  //         //handle errors
+  //         console.log("ERROR: Could not request for activities")
+  //     });
+  // }
 
   render() {
     const pet = this.state.pet;
