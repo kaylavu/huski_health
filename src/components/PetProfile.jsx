@@ -37,10 +37,8 @@ class PetProfile extends Component {
       method: 'POST',
       data: {
         id: this.props.pet.id,
-        newPetName: this.state.petName,
-        newPetWeight: this.state.petWeight, 
+        newPetName: this.state.petName, 
         newPetNotes: this.state.petNotes,
-        // newPetBreed: this.state.pet.breed
       },
       success: (result) => {
         this.props.editPetInfo(result);
