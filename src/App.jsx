@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
-// import axios from 'axios'
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Cookies from 'universal-cookie';
-
 import Dashboard from './components/Dashboard';
 import Pets from './components/Pets';
 import NavBar from './components/NavBar';
-import PetProfile from './components/PetProfile';
 import Homepage from './components/Homepage';
 import SignUp from './components/SignUp'
 import Login from './components/Login'
 import Activity from './components/Activity';
 import NewPetForm from './components/NewPetForm';
 import FileUpload from './components/FileUpload';
+import PdfUpload from './components/PdfUpload';
 import Vets from './components/Vets'
+import Records from './components/Records'
+import Record from './components/Record'
+import Images from './components/Images'
 
 
 import './css/homepage.css';
@@ -24,8 +25,6 @@ import './css/keen-dashboards.css';
 import './css/daypicker.css';
 const cookies = new Cookies();
 
-
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -33,11 +32,11 @@ class App extends Component {
       currentUser: {},
       pets: [
         {
-          id: "1",
-          name: "Leonard",
-          birthday: "April 8, 2012",
+          id: "",
+          name: "",
+          birthday: "",
           age: 6,
-          weight: "22",
+          weight: "",
           breed: "Egyptian Mau",
           owner: "Lexi",
           notes: "These are some notes about my fat cat named Leonard."
@@ -58,28 +57,24 @@ class App extends Component {
    $.ajax(`http://localhost:8080/api/pets/${user.id}`, {
     method: 'GET',
     success: (result) => {
-      console.log("Yes, it worked");
       this.setState({pets: result})
-      console.log(this.state.pets)
     },
     error: function(err) {
-      console.log("It doesnt work")
+      console.log(err);
       }
   });
 }
-
-
 
     setUser(cookieId) {
      $.ajax(`http://localhost:8080/api/user/${cookieId}`, {
       method: 'GET',
       success: (result) => {
-        console.log("Yes, it worked");
+    
         let user = result[0]
         this.updateUser(user)
       },
       error: function(err) {
-        console.log("It doesnt work")
+        console.log(err)
         }
     });
   }
@@ -111,10 +106,9 @@ class App extends Component {
       method: 'GET',
       success: (result) => {
         this.setState({pets: result})
-        console.log("New Pet State after edit:",this.state.pets)
       },
       error: function(err) {
-        console.log("Cannot reset state of pets after edit")
+        console.log(err)
         }
     })
   }
@@ -125,10 +119,9 @@ class App extends Component {
       method: 'GET',
       success: (result) => {
         this.setState({pets: result})
-        console.log("New Pet State after edit:", this.state.pets)
       },
       error: function(err) {
-        console.log("Cannot reset state of pets after edit")
+        console.log(err)
         }
     })
   }
@@ -142,13 +135,10 @@ class App extends Component {
       }
     })
     this.setState({pets: pets})
-    console.log("PETS", pets)
   }
 
   getLatestPetWeight(){
     let pet = this.state.pets[0];
-    console.log("PETS", this.state.pets)
-    // pets.forEach(function(pet) { 
     $.get(`http://localhost:8080/api/pets/${ pet.id }/latestweights`)
     .then(data => {
       if (data[0] === undefined) {
@@ -157,19 +147,17 @@ class App extends Component {
       return pet.weight = data[0].notes;
     })
     .catch(err => {
-      // debugger;
+      console.log(err)
     });
     
     this.setState({pets: pet})
   }
 
   logout() {
-    // cookies.remove('hh')
     this.setState({currentUser: ''})
   }
 
   componentWillMount() {
-    console.log("WILL UPDATE")
     this.setUser(cookies.get('hh'))
   }
 
@@ -188,9 +176,12 @@ class App extends Component {
             <this.PropsRoute exact path="/" component={Homepage}/>
             <this.PropsRoute exact path="/signup" component={SignUp} setUser={this.setUser}/>
             <this.PropsRoute exact path="/login" component={Login} setUser={this.setUser}/>
+            <this.PropsRoute exact path="/records/:id" component={Homepage} />
+            <this.PropsRoute exact path="/record/:id" component={Homepage} />
             <this.PropsRoute exact path="/pets" component={Homepage} pets={this.state.pets} />
             <this.PropsRoute exact path="/pets/new" component={Homepage} addNewPetRender={this.addNewPetRender}/>
             <this.PropsRoute exact path='/pet/:id' component={Homepage} />
+            <this.PropsRoute exact path='/vets' component={Homepage}/>
             </Switch>
         </div>
         </Router>
@@ -204,7 +195,9 @@ class App extends Component {
           <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
           <Switch>
           <this.PropsRoute exact path="/signup" component={SignUp} setUser={this.setUser}/>
-          <this.PropsRoute exact path="/files" component={FileUpload} setUser={this.setUser}/>
+          <this.PropsRoute exact path="/records/:id" component={Records} />
+          <this.PropsRoute exact path="/record/:id" component={Record} />
+          <this.PropsRoute exact path="/images/:id" component={Images} />
           <this.PropsRoute exact path="/login" component={Login} setUser={this.setUser}/>
           <this.PropsRoute exact path="/pets" component={Pets} pets={this.state.pets} currentUser={this.state.currentUser} />
           <this.PropsRoute exact path="/pets/new" component={NewPetForm} addNewPetRender={this.addNewPetRender} currentUser={this.state.currentUser} />

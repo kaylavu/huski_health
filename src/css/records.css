@@ -1,0 +1,14 @@
+div.information {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 40em;
+    margin: 20px 0px;
+}
+
+p.pages {
+    color: #ff9400;
+    margin: 0px 7px;
+    line-height: 2.5;
+}
+

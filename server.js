@@ -1,5 +1,4 @@
 "use strict";
-
 require('dotenv').config();
 const dogBreed = require('what-dog');
 const PORT = process.env.PORT || 8080;
@@ -18,6 +17,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.use(fileUpload())
+app.use('/public', express.static(__dirname + '/public'))
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -26,7 +26,6 @@ app.use(bodyParser.urlencoded({
 
 app.post('/api/whatDog', (req, res) => {
     let dogUrl = req.body.dogUrl
-    console.log(dogUrl)
     dogBreed(dogUrl).then(doggyData => {
         res.send({
             doggyData
@@ -35,20 +34,14 @@ app.post('/api/whatDog', (req, res) => {
 })
 
 app.post('/api/pets/:id', (req, res) => {
-    console.log("HELLO HELLO HELLO", req.body)
     database.editPet(req.body)
         .then(function (result) {
-            console.log(result)
-            // res.send(result)
         })
 })
 
 app.post('/api/pets/:id/activity', (req, res) => {
-    console.log("THE NEW ACTIVITY OBJECT", req.body)
     database.newHistory(req.body)
         .then(function (result) {
-            //    return res.sendStatus()
-            console.log("Result after posting new activity", result)
             return res.send(result)
         })
 })
@@ -58,14 +51,12 @@ app.post('/api/pets/:id/activity', (req, res) => {
 //GET a pet's activities based on petId
 app.get('/api/pets/activities', (req, res) => {
     database.getPetActivities(req.query.id).then(function (result) {
-        // console.log("ACTIVITY RESULT", result)
         return res.send(result)
     })
 })
 
 app.get('/api/pets/:id/weights', (req, res) => {
     database.getPetWeight(req.params.id).then((weights) => {
-            // console.log('WEIGHTS >>>', weights);
             if (weights) {
                 return res.json(weights);
             } else {
@@ -73,16 +64,14 @@ app.get('/api/pets/:id/weights', (req, res) => {
                     error: 'No Weights found'
                 });
             }
-
         })
         .catch(err => {
-            console.log('ERROR', err);
+            console.log(err);
         })
 })
 
 app.get('/api/pets/:id/latestweights', (req, res) => {
     database.getLatestPetWeight(req.params.id).then((weight) => {
-            // console.log('WEIGHTS >>>', weight);
             if (weight) {
                 return res.json(weight);
             } else {
@@ -93,13 +82,12 @@ app.get('/api/pets/:id/latestweights', (req, res) => {
 
         })
         .catch(err => {
-            console.log('ERROR', err);
+            console.log(err);
         })
 })
 
 app.get('/api/pets/:id/feeding', (req, res) => {
     database.getPetFeeding(req.params.id).then(function (result){
-            console.log('FEEDING >>>', result);
             if (result) {
                 return res.json(result);
             } else {
@@ -109,14 +97,12 @@ app.get('/api/pets/:id/feeding', (req, res) => {
             }
         })
         .catch(err => {
-            console.log('ERROR', err);
         })
 })
 
 app.get('/api/pets/:id', (req, res) => {
     database.getPets(req.params.id)
         .then(function (result) {
-            console.log("GET PETS FUNCTION", result)
             res.send(result)
         })
 })
@@ -147,7 +133,6 @@ app.post('/api/pet/new', (req, res) => {
 
  app.post('/api/login', async (req, res) => {
     let user = await database.verifyLogin(req.body)
-    console.log(user)
     if (user.length) {
         res.send(user)
     } else {
@@ -164,20 +149,47 @@ app.post('/api/pet/new', (req, res) => {
     }
  })
 
- app.post('/api/upload', (req, res, next) => {
-    console.log(req.body);
+ app.post('/api/uploadimage', async (req, res, next) => {
+    let image = `public/image/${req.body.filename}.jpg`;
+    await database.insertImage(req.body.filename, req.body.petid, image)
     let imageFile = req.files.file;
-  console.log(imageFile)
-    imageFile.mv(`${__dirname}/public/${req.body.filename}.jpg`, function(err) {
+    imageFile.mv(`${__dirname}/public/image/${req.body.filename}.jpg`, function(err) {
       if (err) {
         return res.status(500).send(err);
       }
-      res.json({file: `public/${req.body.filename}.jpg`})
+      res.json({file: image})
     });
-  
+  })
+
+  app.get('/api/images/:id', async (req, res, next) => {
+    let images = await database.getImages(req.params.id)
+    res.send(images)
+  });
+
+  app.post('/api/uploadpdf', async (req, res, next) => {
+    let pdf = `public/pdf/${req.body.filename}.pdf`
+    await database.insertFile(req.body.filename, req.body.petid, pdf)
+    let pdfFile = req.files.file;
+    pdfFile.mv(`${__dirname}/public/pdf/${req.body.filename}.pdf`, function(err) {
+      if (err) {
+        return res.status(500).send(err);
+      }
+      res.json({file: pdf})
+    });
   })
 
 
+  app.get('/api/pdf/:id', async (req, res, next) => {
+      let files = await database.getFiles(req.params.id)
+      res.send(files)
+    });
+
+    app.get('/api/record/:id', async (req, res, next) => {
+        let file = await database.getFile(req.params.id)
+        res.send(file)
+      });
+
+
 app.listen(PORT, () => {
-    console.log("Example app listening on port " + PORT);
+    console.log("Huski Health is listening on port " + PORT);
 });
